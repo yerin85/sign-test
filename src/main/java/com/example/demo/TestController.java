@@ -3,7 +3,9 @@ package com.example.demo;
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,12 +25,20 @@ public class TestController {
 	@GetMapping(path="/pdfTest")
 	public void pdfTest() throws Exception {
 		
+		ClassPathResource resourceContract = new ClassPathResource("testFile/sample_contract.pdf");
+		ClassPathResource resourceSign = new ClassPathResource("testFile/sample_sign.png");
+		ClassPathResource resourceCert = new ClassPathResource("testFile/testCert.pfx");
+		
+        File fileContract = new File(resourceContract.getURI());
+        File fileSign = new File(resourceSign.getURI());
+        File fileCert = new File(resourceCert.getURI());
+		
 		//load a pdf document
 		PdfDocument doc = new PdfDocument();
-        doc.loadFromFile("C:\\Users\\yerin\\Desktop\\sample_contract.pdf"); 
+        doc.loadFromFile(fileContract.getPath()); 
 
         //Load the certificate
-        PdfCertificate cert = new PdfCertificate("C:\\Users\\yerin\\Desktop\\testCert.pfx", "test"); // not sign image
+        PdfCertificate cert = new PdfCertificate(fileCert.getPath(), "test"); // not sign image
 
         //Create a PdfSignature object and specify its position and size
         PdfSignature signature = new PdfSignature(doc, doc.getPages().get(0), cert, "MySignature");
@@ -54,7 +64,7 @@ public class TestController {
 //        signature.setDistinguishedName(signature.getCertificate().get_IssuerName().getName());
         
         //Set the signature content (image)
-        signature.setSignImageSource(PdfImage.fromFile("C:\\Users\\yerin\\Desktop\\sample_sign.png")); 
+        signature.setSignImageSource(PdfImage.fromFile(fileSign.getPath())); 
 
         //Set the signature font
         signature.setSignDetailsFont(new PdfFont(PdfFontFamily.Helvetica, 10f, PdfFontStyle.Bold));
