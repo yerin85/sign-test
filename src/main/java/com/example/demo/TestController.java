@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.net.URL;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -78,4 +79,24 @@ public class TestController {
         doc.close();
 		
 	}
+	
+	@GetMapping(path="/pdfBoxTest")
+	public void pdfBoxTest() throws Exception {
+		// path: /sch-sign/target/classes/testFile
+		URL resource = getClass().getClassLoader().getResource("testFile");
+		String path = resource.getFile();
+		
+		GraphicSignature sign = new GraphicSignature(path+"/sample_contract.pdf", path+"/sample_contract_sign.pdf", path+"/sample_sign.png");
+		// set page
+		sign.setPageNumber(0);
+		// set width
+		sign.setSignatureWidth(100);
+		// set position
+		sign.setCordinate(650, 150);
+		// save
+		sign.Append();
+		
+	}
+	
+	
 }
